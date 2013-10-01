@@ -55,7 +55,7 @@ class AddGcm < ActiveRecord::Migration
   end
 
   def self.down
-    AddGcm::Rapns::Notification.where(:type => 'Rapns::Gcm::Notification').delete_all
+    AddGcm::Rapns::Notification.deleta_all(:type => 'Rapns::Gcm::Notification')
 
     remove_column :rapns_notifications, :type
     remove_column :rapns_apps, :type

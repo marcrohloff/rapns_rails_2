@@ -15,7 +15,7 @@ module Rapns
             if Rapns.config.push
               relation.all
             else
-              relation.all(:limit => batch_size)
+              relation.find(:all, :limit => batch_size)
             end
           end
         end
