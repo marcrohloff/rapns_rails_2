@@ -1,4 +1,4 @@
-require 'unit_spec_helper'
+require File.expand_path("spec/unit_spec_helper")
 
 describe Rapns::Upgraded do
   let(:logger) { double(:logger, :warn => nil) }
@@ -10,7 +10,7 @@ describe Rapns::Upgraded do
   end
 
   it 'prints a warning and exists if rapns has not been upgraded' do
-    Rapns::App.stub(:count).and_raise(ActiveRecord::StatementInvalid, "test")
+    Rapns::App.stub(:count).and_raise(ActiveRecord::StatementInvalid)
     Rapns::Upgraded.stub(:puts)
     Rapns::Upgraded.should_receive(:exit).with(1)
     Rapns::Upgraded.check(:exit => true)
@@ -18,7 +18,7 @@ describe Rapns::Upgraded do
 
   it 'does not exit if Rapns has not been upgraded and :exit is false' do
     Rapns.config.stub(:embedded => true)
-    Rapns::App.stub(:count).and_raise(ActiveRecord::StatementInvalid, "test")
+    Rapns::App.stub(:count).and_raise(ActiveRecord::StatementInvalid)
     Rapns::Upgraded.stub(:puts)
     Rapns::Upgraded.should_not_receive(:exit)
     Rapns::Upgraded.check(:exit => false)
@@ -26,7 +26,7 @@ describe Rapns::Upgraded do
 
   it 'does not exit if Rapns has not been upgraded and is in push mode' do
     Rapns.config.stub(:push => true)
-    Rapns::App.stub(:count).and_raise(ActiveRecord::StatementInvalid, "test")
+    Rapns::App.stub(:count).and_raise(ActiveRecord::StatementInvalid)
     Rapns::Upgraded.stub(:puts)
     Rapns::Upgraded.should_not_receive(:exit)
     Rapns::Upgraded.check(:exit => false)

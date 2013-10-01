@@ -1,4 +1,4 @@
-require 'unit_spec_helper'
+require File.expand_path("spec/unit_spec_helper")
 require 'rapns/notifier'
 
 describe Rapns::Notifier do
@@ -16,13 +16,16 @@ describe Rapns::Notifier do
 
     describe "notify" do
       it "calls write on the socket" do
-        UDPSocket.any_instance.should_receive(:write)
+        sock = UDPSocket.new
+        UDPSocket.should_receive(:new).and_return(sock)
+        sock.should_receive(:write)
+
         subject.notify
       end
 
       it "writes data that can be read from socket" do
         subject.notify
-        expect(@reader.recvmsg).to be_an(Array)
+        @reader.recvfrom(4096).should be_an(Array)
       end
     end
   end

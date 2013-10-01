@@ -1,4 +1,4 @@
-require 'unit_spec_helper'
+require File.expand_path("spec/unit_spec_helper")
 
 describe Rapns::Daemon::DeliveryHandlerCollection do
   let(:handler) { double.as_null_object }
@@ -6,7 +6,7 @@ describe Rapns::Daemon::DeliveryHandlerCollection do
 
   it 'returns the size of the collection' do
     collection.push(handler)
-    collection.size.should eq 1
+    collection.size.should == 1
   end
 
   it 'pops a handler from the collection' do
@@ -15,7 +15,7 @@ describe Rapns::Daemon::DeliveryHandlerCollection do
     handler.should_receive(:wakeup)
     handler.should_receive(:wait)
     collection.pop
-    collection.size.should eq 0
+    collection.size.should == 0
   end
 
   it 'wakes up all handlers when popping a single handler' do

@@ -2,13 +2,26 @@ require 'active_record'
 require 'multi_json'
 
 module Rapns
-  def self.attr_accessible_available?
+
+  def self.is_rails2?
     require 'rails'
-    ::Rails::VERSION::STRING < '4'
+    false
+  rescue MissingSourceFile
+    true
   end
+
+  def self.is_rails2_or_3?
+    is_rails2? || ::Rails::VERSION::STRING < '4'
+  end
+
+  def self.attr_accessible_available?
+    is_rails2_or_3?
+  end
+
 end
 
 require 'rapns/version'
+require 'rapns/rails-2-compatibility' if Rapns.is_rails2?
 require 'rapns/deprecation'
 require 'rapns/deprecatable'
 require 'rapns/logger'

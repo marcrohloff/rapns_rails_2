@@ -1,7 +1,7 @@
 module Rapns
   module Gcm
     class Notification < Rapns::Notification
-      validates :registration_ids, :presence => true
+      validates_presence_of :registration_ids
       validates_with Rapns::Gcm::ExpiryCollapseKeyMutualInclusionValidator
       validates_with Rapns::Gcm::PayloadDataSizeValidator
       validates_with Rapns::Gcm::RegistrationIdsCountValidator

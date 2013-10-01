@@ -29,7 +29,8 @@ module Rapns
           while true
             begin
               @sleep_reader.read_nonblock(1)
-            rescue IO::WaitReadable
+            rescue Errno::EWOULDBLOCK, Errno::EAGAIN
+            # rescue IO::WaitReadable
               break
             end
           end
@@ -38,8 +39,9 @@ module Rapns
         if rs && rs.include?(@udp_wakeup)
           while true
             begin
-              @udp_wakeup.recvmsg_nonblock
-            rescue IO::WaitReadable
+              @udp_wakeup.recv_nonblock(1)
+            rescue Errno::EWOULDBLOCK, Errno::EAGAIN
+            # rescue IO::WaitReadable
               break
             end
           end

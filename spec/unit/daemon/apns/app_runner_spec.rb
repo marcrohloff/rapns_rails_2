@@ -1,8 +1,8 @@
-require 'unit_spec_helper'
+require File.expand_path("spec/unit_spec_helper")
 require File.dirname(__FILE__) + '/../app_runner_shared.rb'
 
 describe Rapns::Daemon::Apns::AppRunner do
-  it_behaves_like 'an AppRunner subclass'
+  it_should_behave_like 'an AppRunner subclass'
 
   let(:app_class) { Rapns::Apns::App }
   let(:app) { app_class.create!(:name => 'my_app', :environment => 'development',

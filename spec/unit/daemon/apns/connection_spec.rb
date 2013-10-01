@@ -1,4 +1,4 @@
-require "unit_spec_helper"
+require File.expand_path("spec/unit_spec_helper")
 
 describe Rapns::Daemon::Apns::Connection do
   let(:rsa_key) { double }
@@ -85,30 +85,30 @@ describe Rapns::Daemon::Apns::Connection do
       it 'reflects if the certificate will expire soon' do
         cert = OpenSSL::X509::Certificate.new(app.certificate)
         connection.should_receive(:reflect).with(:apns_certificate_will_expire, app, cert.not_after)
-        Timecop.freeze(cert.not_after - 3.days) { connection.connect }
+        Timecop.freeze(cert.not_after.to_datetime - 3.days) { connection.connect }
       end
 
       it 'logs that the certificate will expire soon' do
         cert = OpenSSL::X509::Certificate.new(app.certificate)
         logger.should_receive(:warn).with("[#{app.name}] Certificate will expire at 2022-09-07 03:18:32 UTC.")
-        Timecop.freeze(cert.not_after - 3.days) { connection.connect }
+        Timecop.freeze(cert.not_after.to_datetime - 3.days) { connection.connect }
       end
 
       it 'does not reflect if the certificate will not expire soon' do
         cert = OpenSSL::X509::Certificate.new(app.certificate)
         connection.should_not_receive(:reflect).with(:apns_certificate_will_expire, app, kind_of(Time))
-        Timecop.freeze(cert.not_after - 2.months) { connection.connect }
+        Timecop.freeze(cert.not_after.to_datetime - 2.months) { connection.connect }
       end
 
       it 'logs that the certificate has expired' do
         cert = OpenSSL::X509::Certificate.new(app.certificate)
         logger.should_receive(:error).with("[#{app.name}] Certificate expired at 2022-09-07 03:18:32 UTC.")
-        Timecop.freeze(cert.not_after + 1.day) { connection.connect rescue Rapns::Apns::CertificateExpiredError }
+        Timecop.freeze(cert.not_after.to_datetime + 1.day) { connection.connect rescue Rapns::Apns::CertificateExpiredError }
       end
 
       it 'raises an error if the certificate has expired' do
         cert = OpenSSL::X509::Certificate.new(app.certificate)
-        Timecop.freeze(cert.not_after + 1.day) do
+        Timecop.freeze(cert.not_after.to_datetime + 1.day) do
           expect { connection.connect }.to raise_error(Rapns::Apns::CertificateExpiredError)
         end
       end

@@ -1,7 +1,7 @@
 # encoding: US-ASCII
 
-require "unit_spec_helper"
-require 'unit/notification_shared.rb'
+require File.expand_path("spec/unit_spec_helper")
+require 'spec/unit/notification_shared.rb'
 
 describe Rapns::Apns::Notification do
   it_should_behave_like 'an Notification subclass'
@@ -25,7 +25,7 @@ describe Rapns::Apns::Notification do
   end
 
   it "should default the sound to 'default'" do
-    notification.sound.should eq('default')
+    notification.sound.should == 'default'
   end
 
   it "should default the expiry to 1 day" do
@@ -193,17 +193,23 @@ end
 describe Rapns::Apns::Notification, "multi_json usage" do
   describe Rapns::Apns::Notification, "alert" do
     it "should call MultiJson.load when multi_json version is 1.3.0" do
-      notification = Rapns::Apns::Notification.new(:alert => { :a => 1 }, :alert_is_json => true)
-      Gem.stub(:loaded_specs).and_return( { 'multi_json' => Gem::Specification.new('multi_json', '1.3.0') } )
-      MultiJson.should_receive(:load).with(any_args())
-      notification.alert
+      Object.stub_constants(:MultiJson => mock) do
+        MultiJson.should_receive(:encode).with(any_args())
+        MultiJson.should_receive(:load).with(any_args())
+        notification = Rapns::Apns::Notification.new(:alert => { :a => 1 }, :alert_is_json => true)
+        Gem.stub(:loaded_specs).and_return( { 'multi_json' => Gem::Specification.new('multi_json', '1.3.0') } )
+        notification.alert
+      end
     end
 
     it "should call MultiJson.decode when multi_json version is 1.2.9" do
-      notification = Rapns::Apns::Notification.new(:alert => { :a => 1 }, :alert_is_json => true)
-      Gem.stub(:loaded_specs).and_return( { 'multi_json' => Gem::Specification.new('multi_json', '1.2.9') } )
-      MultiJson.should_receive(:decode).with(any_args())
-      notification.alert
+      Object.stub_constants(:MultiJson => mock) do
+        MultiJson.should_receive(:encode).with(any_args())
+        MultiJson.should_receive(:decode).with(any_args())
+        notification = Rapns::Apns::Notification.new(:alert => { :a => 1 }, :alert_is_json => true)
+        Gem.stub(:loaded_specs).and_return( { 'multi_json' => Gem::Specification.new('multi_json', '1.2.9') } )
+        notification.alert
+      end
     end
   end
 end

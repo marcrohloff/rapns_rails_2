@@ -55,20 +55,35 @@ end
 
 DatabaseCleaner.strategy = :truncation
 
-require 'rapns'
+require 'rapns_rails_2'
 require 'rapns/daemon'
 
 Rapns::Notification.reset_column_information
 Rapns::App.reset_column_information
 Rapns::Apns::Feedback.reset_column_information
 
-RSpec.configure do |config|
+require 'spec'
+require 'spec/mocks'
+
+Spec::Runner.configure do |config|
   # config.before :suite do
   #   PerfTools::CpuProfiler.start('/tmp/rapns_profile')
   # end
   # config.after :suite do
   #   PerfTools::CpuProfiler.stop
   # end
+
+  config.before(:all) do
+    unless defined? RAILS_DEFAULT_LOGGER
+      logger = mock
+      logger.stub(:debug) { |a| puts "DEBUG:" + a }
+      logger.as_null_object
+      RAILS_DEFAULT_LOGGER = logger
+    end
+    ActiveRecord::Base.logger = RAILS_DEFAULT_LOGGER
+
+    ActiveRecord::Base.default_timezone = :utc
+  end
 
   config.before(:each) do
     DatabaseCleaner.clean
@@ -82,6 +97,30 @@ RSpec.configure do |config|
     end
   end
 end
+
+def stub_constants(constants, &block)
+  defined_constants = {}
+  saved_constants = {}
+
+  constants.each do |constant, val|
+    defined = defined_constants[ constant ] = self.const_defined?(constant)
+    saved_constants[ constant ] = self.const_get( constant ) if defined
+    Kernel::silence_warnings { self.const_set( constant, val ) }
+  end
+
+  begin
+    block.call
+  ensure
+    constants.each do |constant, val|
+      if defined_constants[ constant ]
+        Kernel::silence_warnings { self.const_set( constant, saved_constants[ constant ] ) }
+      else
+        Kernel::silence_warnings { self.send(:remove_const, constant ) }
+      end
+    end
+  end
+end
+public :stub_constants
 
 # a test certificate that contains both an X509 certificate and
 # a private key, similar to those used for connecting to Apple

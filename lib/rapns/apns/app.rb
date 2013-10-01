@@ -1,8 +1,9 @@
 module Rapns
   module Apns
     class App < Rapns::App
-      validates :environment, :presence => true, :inclusion => { :in => %w(development production sandbox) }
-      validates :certificate, :presence => true
+      validates_presence_of :environment
+      validates_inclusion_of :environment, :in => %w(development production sandbox)
+      validates_presence_of :certificate
       validate :certificate_has_matching_private_key
 
       private

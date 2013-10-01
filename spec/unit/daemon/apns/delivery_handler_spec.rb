@@ -1,4 +1,4 @@
-require 'unit_spec_helper'
+require File.expand_path("spec/unit_spec_helper")
 require File.dirname(__FILE__) + '/../delivery_handler_shared.rb'
 
 describe Rapns::Daemon::Apns::DeliveryHandler do

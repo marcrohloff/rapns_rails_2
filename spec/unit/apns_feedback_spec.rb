@@ -1,4 +1,4 @@
-require 'unit_spec_helper'
+require File.expand_path("spec/unit_spec_helper")
 
 describe Rapns, 'apns_feedback' do
   let!(:app) { Rapns::Apns::App.create!(:name => 'test', :environment => 'production', :certificate => TEST_CERT) }

@@ -3,8 +3,8 @@ module Rapns
     class Notification < Rapns::Notification
       class MultipleAppAssignmentError < StandardError; end
 
-      validates :device_token, :presence => true
-      validates :badge, :numericality => true, :allow_nil => true
+      validates_presence_of :device_token
+      validates_numericality_of :badge, :allow_nil => true
 
       validates_with Rapns::Apns::DeviceTokenFormatValidator
       validates_with Rapns::Apns::BinaryNotificationValidator

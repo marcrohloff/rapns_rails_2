@@ -1,5 +1,5 @@
-require 'unit_spec_helper'
-require 'unit/notification_shared.rb'
+require File.expand_path("spec/unit_spec_helper")
+require 'spec/unit/notification_shared.rb'
 
 describe Rapns::Gcm::Notification do
   it_should_behave_like 'an Notification subclass'
@@ -13,7 +13,7 @@ describe Rapns::Gcm::Notification do
   it "has a 'data' payload limit of 4096 bytes" do
     notification.data = { :key => "a" * 4096 }
     notification.valid?.should be_false
-    notification.errors[:base].should == ["GCM notification payload data cannot be larger than 4096 bytes."]
+    notification.errors[:base].should == "GCM notification payload data cannot be larger than 4096 bytes."
   end
 
   it 'allows assignment of many registration IDs' do
@@ -27,7 +27,7 @@ describe Rapns::Gcm::Notification do
   it 'num of registration Ids limit of 1000' do
     notification.registration_ids = ['a']*(1000+1)
     notification.valid?.should be_false
-    notification.errors[:base].should == ["GCM notification number of registration_ids cannot be larger than 1000."]
+    notification.errors[:base].should == "GCM notification number of registration_ids cannot be larger than 1000"
   end
 
   it 'allows assignment of a single registration ID' do
@@ -42,7 +42,7 @@ describe Rapns::Gcm::Notification do
     notification.collapse_key = 'test'
     notification.expiry = nil
     notification.valid?.should be_false
-    notification.errors[:expiry].should == ['must be set when using a collapse_key']
+    notification.errors[:expiry].should == 'must be set when using a collapse_key'
   end
 
   it 'includes time_to_live in the payload' do

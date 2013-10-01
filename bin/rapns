@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'optparse'
-require 'rapns'
+require 'rapns_rails_2'
 
 environment = ARGV[0]
 

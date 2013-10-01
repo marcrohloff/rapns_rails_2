@@ -1,4 +1,4 @@
-require 'unit_spec_helper'
+require File.expand_path("spec/unit_spec_helper")
 
 describe Rapns::Apns::CertificateExpiredError do
   let(:app) { double(:name => 'test') }

@@ -1,15 +1,19 @@
 source 'https://rubygems.org'
 
 gem 'rake'
-gem 'rspec', '>= 2.4'
-gem 'rails', '~> 3.2'
+gem 'rails', '~>2.3'
+
 gem 'database_cleaner', '1.0.1'
-gem 'simplecov'
 gem 'timecop', '0.5.9.2'
 
-platform :mri_19, :mri_20 do
-  gem 'cane'
+group :test, :development do
+  # gem 'simplecov'
+  gem 'rspec-rails', '1.3.4'
 end
+
+#platform :mri_19, :mri_20 do
+#  gem 'cane'
+#end
 
 platform :ruby do
   gem 'pg'

@@ -1,4 +1,4 @@
-require 'unit_spec_helper'
+require File.expand_path("spec/unit_spec_helper")
 
 describe Rapns::Daemon::AppRunner, 'stop' do
   let(:runner) { double }
@@ -25,7 +25,8 @@ describe Rapns::Daemon::AppRunner, 'enqueue' do
   after { Rapns::Daemon::AppRunner.runners.clear }
 
   it 'batches notifications by app' do
-    batch = double.as_null_object
+    batch = double
+    batch.stub!(:describe)
     Rapns::Daemon::Batch.stub(:new => batch)
     Rapns::Daemon::Batch.should_receive(:new).with([notification1])
     Rapns::Daemon::Batch.should_receive(:new).with([notification2])

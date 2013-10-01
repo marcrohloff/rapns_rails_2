@@ -3,13 +3,13 @@ $:.push File.expand_path("../lib", __FILE__)
 require "rapns/version"
 
 Gem::Specification.new do |s|
-  s.name        = "rapns"
+  s.name        = "rapns_rails_2"
   s.version     = Rapns::VERSION
-  s.authors     = ["Ian Leitch"]
+  s.authors     = ["Ian Leitch", "Marc Rohloff"]
   s.email       = ["port001@gmail.com"]
-  s.homepage    = "https://github.com/ileitch/rapns"
+  s.homepage    = "https://github.com/marcrohloff/rapns_rails_2"
   s.summary     = %q{Professional grade APNs and GCM for Ruby}
-  s.description = %q{Professional grade APNs and GCM for Ruby}
+  s.description = %q{Professional grade APNs and GCM for Ruby with Rails 2 compatibility}
 
   s.files         = `git ls-files -- lib README.md CHANGELOG.md LICENSE`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features,config}`.split("\n")

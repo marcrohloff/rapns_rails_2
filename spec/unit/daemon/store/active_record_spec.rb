@@ -1,4 +1,4 @@
-require 'unit_spec_helper'
+require File.expand_path("spec/unit_spec_helper")
 require 'rapns/daemon/store/active_record'
 
 describe Rapns::Daemon::Store::ActiveRecord do
@@ -24,7 +24,7 @@ describe Rapns::Daemon::Store::ActiveRecord do
       Rapns.config.batch_size = 5000
       Rapns.config.push = false
       relation = double.as_null_object
-      relation.should_receive(:limit).with(5000)
+      relation.should_receive(:all).with(:limit => 5000)
       Rapns::Notification.stub(:ready_for_delivery => relation)
       store.deliverable_notifications([app])
     end
@@ -83,7 +83,7 @@ describe Rapns::Daemon::Store::ActiveRecord do
     end
 
     it 'saves the notification without validation' do
-      notification.should_receive(:save!).with(:validate => false)
+      notification.should_receive(:save).with(false)
       store.mark_retryable(notification, now)
     end
   end
@@ -93,8 +93,8 @@ describe Rapns::Daemon::Store::ActiveRecord do
 
     it 'sets the attributes on the object for use in reflections' do
       store.mark_batch_retryable([notification], deliver_after)
-      notification.deliver_after.should eq deliver_after
-      notification.retries.should eq 1
+      notification.deliver_after.should == deliver_after
+      notification.retries.should == 1
     end
 
     it 'increments the retired count' do
@@ -127,7 +127,7 @@ describe Rapns::Daemon::Store::ActiveRecord do
     end
 
     it 'saves the notification without validation' do
-      notification.should_receive(:save!).with(:validate => false)
+      notification.should_receive(:save).with(false)
       store.mark_delivered(notification)
     end
   end
@@ -135,7 +135,7 @@ describe Rapns::Daemon::Store::ActiveRecord do
   describe 'mark_batch_delivered' do
     it 'sets the attributes on the object for use in reflections' do
       store.mark_batch_delivered([notification])
-      notification.delivered_at.should eq now
+      notification.delivered_at.should == now
       notification.delivered.should be_true
     end
 
@@ -187,7 +187,7 @@ describe Rapns::Daemon::Store::ActiveRecord do
     end
 
     it 'saves the notification without validation' do
-      notification.should_receive(:save!).with(:validate => false)
+      notification.should_receive(:save).with(false)
       store.mark_failed(notification, nil, '')
     end
   end
@@ -195,12 +195,12 @@ describe Rapns::Daemon::Store::ActiveRecord do
   describe 'mark_batch_failed' do
     it 'sets the attributes on the object for use in reflections' do
       store.mark_batch_failed([notification], 123, 'an error')
-      notification.failed_at.should eq now
+      notification.failed_at.should == now
       notification.delivered_at.should be_nil
       notification.delivered.should be_false
       notification.failed.should be_true
-      notification.error_code.should eq 123
-      notification.error_description.should eq 'an error'
+      notification.error_code.should == 123
+      notification.error_description.should == 'an error'
     end
 
     it 'marks the notification as not delivered' do

@@ -1,4 +1,4 @@
-require 'unit_spec_helper'
+require File.expand_path("spec/unit_spec_helper")
 
 describe Rapns do
   let(:config) { double }
@@ -6,7 +6,9 @@ describe Rapns do
   before { Rapns.stub(:config => config) }
 
   it 'can yields a config block' do
-    expect { |b| Rapns.configure(&b) }.to yield_with_args(config)
+    yielded_args = nil
+    Rapns.configure do |*a| yielded_args = a end
+    yielded_args.should == [config]
   end
 end
 

@@ -1,34 +1,25 @@
-class RapnsGenerator < Rails::Generators::Base
-  include Rails::Generators::Migration
-  source_root File.expand_path('../templates', __FILE__)
+class RapnsGenerator < Rails::Generator::Base
 
-  def self.next_migration_number(path)
-    @time ||= Time.now.utc
-    @calls ||= -1
-    @calls += 1
-    (@time + @calls.seconds).strftime("%Y%m%d%H%M%S")
-  end
+  def manifest
+    record do |m|
 
-  def copy_migration
-    add_rapns_migration('create_rapns_notifications')
-    add_rapns_migration('create_rapns_feedback')
-    add_rapns_migration('add_alert_is_json_to_rapns_notifications')
-    add_rapns_migration('add_app_to_rapns')
-    add_rapns_migration('create_rapns_apps')
-    add_rapns_migration('add_gcm')
-  end
+      puts m.class
 
-   def copy_config
-    copy_file 'rapns.rb', 'config/initializers/rapns.rb'
-  end
+      m.file 'rapns.rb', 'config/initializers/rapns.rb'
 
-  protected
+      create_migration m, "create_rapns_notifications"
+      create_migration m, "create_rapns_feedback"
+      create_migration m, "add_alert_is_json_to_rapns_notifications"
+      create_migration m, "add_app_to_rapns"
+      create_migration m, "create_rapns_apps"
+      create_migration m, "add_gcm"
 
-  def add_rapns_migration(template)
-    migration_dir = File.expand_path('db/migrate')
-
-    if !self.class.migration_exists?(migration_dir, template)
-      migration_template "#{template}.rb", "db/migrate/#{template}.rb"
     end
+
   end
+
+  def create_migration(m, filename)
+    m.migration_template "#{filename}.rb", "db/migrate", :migration_file_name => filename
+  end
+
 end

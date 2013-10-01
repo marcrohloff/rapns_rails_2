@@ -1,4 +1,4 @@
-require "unit_spec_helper"
+require File.expand_path("spec/unit_spec_helper")
 
 describe Rapns::Daemon::InterruptibleSleep do
 
@@ -26,12 +26,12 @@ describe Rapns::Daemon::InterruptibleSleep do
   end
 
   it 'returns false when timeout occurs' do
-    expect(subject.sleep(0.01)).to be_false
+    subject.sleep(0.01).should be_false
   end
 
   it 'returns true when sleep does not timeout' do
     subject.interrupt_sleep
-    expect(subject.sleep(0.01)).to be_true
+    subject.sleep(0.01).should be_true
   end
 
   context 'with UDP socket connected' do
@@ -40,26 +40,28 @@ describe Rapns::Daemon::InterruptibleSleep do
     end
 
     it 'times out with no udp activity' do
-      expect(subject.sleep(0.01)).to be_false
+      subject.sleep(0.01).should be_false
     end
 
     it 'wakes on UDPSocket' do
       waker = UDPSocket.new
       waker.connect(@host, @port)
       waker.write('x')
-      expect(subject.sleep(0.01)).to be_true
+      subject.sleep(0.01).should be_true
+      waker.close
     end
 
     it 'consumes all data on udp socket' do
       waker = UDPSocket.new
-      waker.connect(@host, @port)
-      waker.sendmsg('x')
-      waker.sendmsg('x')
-      waker.sendmsg('x')
+      # waker.connect(@host, @port)
+      waker.send('x', 0, @host, @port)
+      waker.send('x', 0, @host, @port)
+      waker.send('x', 0, @host, @port)
       # true since there is data to be read => no timeout
-      expect(subject.sleep(0.01)).to be_true
+      subject.sleep(0.01).should be_true
       # false since data is consumed => wait for full timeout
-      expect(subject.sleep(0.01)).to be_false
+      subject.sleep(0.01).should be_false
+      waker.close
     end
   end
 

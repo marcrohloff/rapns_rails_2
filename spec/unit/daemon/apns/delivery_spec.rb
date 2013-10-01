@@ -1,8 +1,8 @@
-require 'unit_spec_helper'
+require File.expand_path("spec/unit_spec_helper")
 
 describe Rapns::Daemon::Apns::Delivery do
   let(:app) { double(:name => 'MyApp') }
-  let(:notification) { double.as_null_object }
+  let(:notification) { double(:id => 123).as_null_object }
   let(:batch) { double(:mark_failed => nil, :mark_delivered => nil) }
   let(:logger) { double(:error => nil, :info => nil) }
   let(:config) { double(:check_for_errors => true) }

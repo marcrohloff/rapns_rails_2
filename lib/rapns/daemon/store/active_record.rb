@@ -12,8 +12,11 @@ module Rapns
           with_database_reconnect_and_retry do
             batch_size = Rapns.config.batch_size
             relation = Rapns::Notification.ready_for_delivery.for_apps(apps)
-            relation = relation.limit(batch_size) unless Rapns.config.push
-            relation.to_a
+            if Rapns.config.push
+              relation.all
+            else
+              relation.all(:limit => batch_size)
+            end
           end
         end
 
@@ -21,7 +24,7 @@ module Rapns
           with_database_reconnect_and_retry do
             notification.retries += 1
             notification.deliver_after = deliver_after
-            notification.save!(:validate => false)
+            notification.save(false)
           end
         end
 
@@ -34,7 +37,9 @@ module Rapns
             ids << n.id
           end
           with_database_reconnect_and_retry do
-            Rapns::Notification.where(:id => ids).update_all(['retries = retries + 1, deliver_after = ?', deliver_after])
+            Rapns::Notification.find(ids).each { |n|
+              n.update_attributes(:retries => n.retries + 1, :deliver_after => deliver_after)
+            }
           end
         end
 
@@ -42,7 +47,7 @@ module Rapns
           with_database_reconnect_and_retry do
             notification.delivered = true
             notification.delivered_at = Time.now
-            notification.save!(:validate => false)
+            notification.save(false)
           end
         end
 
@@ -56,7 +61,9 @@ module Rapns
             ids << n.id
           end
           with_database_reconnect_and_retry do
-            Rapns::Notification.where(:id => ids).update_all(['delivered = ?, delivered_at = ?', true, now])
+            Rapns::Notification.find(ids).each { |n|
+              n.update_attributes(:delivered => true, :delivered_at => now)
+            }
           end
         end
 
@@ -68,7 +75,7 @@ module Rapns
             notification.failed_at = Time.now
             notification.error_code = code
             notification.error_description = description
-            notification.save!(:validate => false)
+            notification.save(false)
           end
         end
 
@@ -86,7 +93,9 @@ module Rapns
             ids << n.id
           end
           with_database_reconnect_and_retry do
-            Rapns::Notification.where(:id => ids).update_all(['delivered = ?, delivered_at = NULL, failed = ?, failed_at = ?, error_code = ?, error_description = ?', false, true, now, code, description])
+            Rapns::Notification.find(ids).each { |n|
+              n.update_attributes(:delivered => false, :delivered_at => nil, :failed => true, :failed_at => now, :error_code => code, :error_description => description)
+            }
           end
         end
 
@@ -100,7 +109,7 @@ module Rapns
         def create_gcm_notification(attrs, data, registration_ids, deliver_after, app)
           with_database_reconnect_and_retry do
             notification = Rapns::Gcm::Notification.new
-            notification.assign_attributes(attrs)
+            notification.attributes = attrs
             notification.data = data
             notification.registration_ids = registration_ids
             notification.deliver_after = deliver_after

@@ -1,4 +1,4 @@
-require 'unit_spec_helper'
+require File.expand_path("spec/unit_spec_helper")
 
 describe Rapns::Daemon::Batch do
   let(:notification1) { double(:notification1, :id => 1) }
@@ -11,15 +11,15 @@ describe Rapns::Daemon::Batch do
   end
 
   it 'exposes the notifications' do
-    batch.notifications.should eq [notification1, notification2]
+    batch.notifications.should == [notification1, notification2]
   end
 
   it 'exposes the number notifications' do
-    batch.num_notifications.should eq 2
+    batch.num_notifications.should == 2
   end
 
   it 'exposes the number notifications processed' do
-    batch.num_processed.should eq 0
+    batch.num_processed.should == 0
   end
 
   it 'increments the processed notifications count' do
@@ -32,7 +32,7 @@ describe Rapns::Daemon::Batch do
   end
 
   it 'can be described' do
-    batch.describe.should eq '1, 2'
+    batch.describe.should == '1, 2'
   end
 
   describe 'mark_delivered' do
@@ -55,7 +55,7 @@ describe Rapns::Daemon::Batch do
 
       it 'defers marking the notification as delivered until the batch is complete' do
         batch.mark_delivered(notification1)
-        batch.delivered.should eq [notification1]
+        batch.delivered.should == [notification1]
       end
     end
   end
@@ -81,7 +81,7 @@ describe Rapns::Daemon::Batch do
       it 'defers marking the notification as failed' do
         Rapns.config.batch_storage_updates = true
         batch.mark_failed(notification1, 1, 'an error')
-        batch.failed.should eq({[1, 'an error'] => [notification1]})
+        batch.failed.should == {[1, 'an error'] => [notification1]}
       end
     end
   end
@@ -108,7 +108,7 @@ describe Rapns::Daemon::Batch do
 
       it 'defers marking the notification as retryable' do
         batch.mark_retryable(notification1, time)
-        batch.retryable.should eq({time => [notification1]})
+        batch.retryable.should == {time => [notification1]}
       end
     end
   end
@@ -123,13 +123,13 @@ describe Rapns::Daemon::Batch do
     it 'clears the notifications' do
       expect do
         2.times { batch.notification_processed }
-      end.to change(batch, :notifications).to([])
+      end.to change(batch.notifications, :length).to(0)
     end
 
     it 'identifies as complete' do
       expect do
         2.times { batch.notification_processed }
-      end.to change(batch, :complete?).to(be_true)
+      end.to change(batch, :complete?).to(true)
     end
 
     it 'reflects errors raised during completion' do
@@ -160,7 +160,7 @@ describe Rapns::Daemon::Batch do
 
       it 'clears the delivered notifications' do
         complete
-        batch.delivered.should eq([])
+        batch.delivered.should == []
       end
     end
 
@@ -185,7 +185,7 @@ describe Rapns::Daemon::Batch do
 
       it 'clears the failed notifications' do
         complete
-        batch.failed.should eq({})
+        batch.failed.should == {}
       end
     end
 
@@ -212,7 +212,7 @@ describe Rapns::Daemon::Batch do
 
       it 'clears the retryable notifications' do
         complete
-        batch.retryable.should eq({})
+        batch.retryable.should == {}
       end
     end
   end

@@ -3,17 +3,19 @@ shared_examples_for "an Notification subclass" do
     before { Rapns::Deprecation.stub(:warn) }
 
     it "calls MultiJson.dump when multi_json responds to :dump" do
-      notification = notification_class.new
-      MultiJson.stub(:respond_to?).with(:dump).and_return(true)
-      MultiJson.should_receive(:dump).with(any_args())
-      notification.send(data_setter, { :pirates => 1 })
+      Object.stub_constants(:MultiJson => mock) do
+        MultiJson.should_receive(:dump).with(any_args())
+        notification = notification_class.new
+        notification.send(data_setter, { :pirates => 1 })
+      end
     end
 
     it "calls MultiJson.encode when multi_json does not respond to :dump" do
-      notification = notification_class.new
-      MultiJson.stub(:respond_to?).with(:dump).and_return(false)
-      MultiJson.should_receive(:encode).with(any_args())
-      notification.send(data_setter, { :ninjas => 1 })
+      Object.stub_constants(:MultiJson => mock) do
+        notification = notification_class.new
+        MultiJson.should_receive(:encode).with(any_args())
+        notification.send(data_setter, { :ninjas => 1 })
+      end
     end
 
     it "raises an ArgumentError if something other than a Hash is assigned" do
@@ -32,8 +34,9 @@ shared_examples_for "an Notification subclass" do
       notification.send(data_getter).should == {"hi" => "mom"}
     end
 
-    if Rails::VERSION::STRING < '4'
+    if Rapns.is_rails2_or_3?
       it 'warns if attributes_for_device is assigned via mass-assignment' do
+        RAILS_DEFAULT_LOGGER.stub!(:debug)
         Rapns::Deprecation.should_receive(:warn).with(':attributes_for_device via mass-assignment is deprecated. Use :data or the attributes_for_device= instance method.')
         notification_class.new(:attributes_for_device => {:hi => 'mom'})
       end

@@ -1,4 +1,4 @@
-require "unit_spec_helper"
+require File.expand_path("spec/unit_spec_helper")
 
 describe Rapns::Daemon::Apns::FeedbackReceiver, 'check_for_feedback' do
 
@@ -118,7 +118,7 @@ describe Rapns::Daemon::Apns::FeedbackReceiver, 'check_for_feedback' do
     Rapns::Deprecation.muted do
       Rapns.config.on_apns_feedback &callback
     end
-    expect { receiver.check_for_feedback }.not_to raise_error
+    lambda { receiver.check_for_feedback }.should_not raise_error
   end
 
   it 'logs an exception from the apns_feedback_callback' do

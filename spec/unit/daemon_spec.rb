@@ -1,4 +1,4 @@
-require 'unit_spec_helper'
+require File.expand_path("spec/unit_spec_helper")
 require 'rapns/daemon/store/active_record'
 
 describe Rapns::Daemon, "when starting" do

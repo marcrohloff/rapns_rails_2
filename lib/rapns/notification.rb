@@ -1,8 +1,9 @@
-module Rapns
+  module Rapns
   class Notification < ActiveRecord::Base
     include Rapns::MultiJsonHelper
 
     self.table_name = 'rapns_notifications'
+    self.store_full_sti_class = true
 
     # TODO: Dump using multi json.
     serialize :registration_ids
@@ -11,20 +12,24 @@ module Rapns
 
     if Rapns.attr_accessible_available?
       attr_accessible :badge, :device_token, :sound, :alert, :data, :expiry,:delivered,
-        :delivered_at, :failed, :failed_at, :error_code, :error_description, :deliver_after,
+        :delivered_at, :failed, :failed_at, :error_code, :error_description, :retries, :deliver_after,
         :alert_is_json, :app, :app_id, :collapse_key, :delay_while_idle, :registration_ids
     end
 
-    validates :expiry, :numericality => true, :allow_nil => true
-    validates :app, :presence => true
+    validates_numericality_of :expiry, :allow_nil => true
+    validates_presence_of :app
 
-    scope :ready_for_delivery, lambda {
-      where('delivered = ? AND failed = ? AND (deliver_after IS NULL OR deliver_after < ?)',
-            false, false, Time.now)
+    named_scope :ready_for_delivery, lambda {
+      {
+        :conditions => ['delivered = ? AND failed = ? AND (deliver_after IS NULL OR deliver_after < ?)',
+                        false, false, Time.now]
+      }
     }
 
-    scope :for_apps, lambda { |apps|
-      where('app_id IN (?)', apps.map(&:id))
+    named_scope :for_apps, lambda { |apps|
+      {
+        :conditions => ['app_id IN (?)', apps.map(&:id)]
+      }
     }
 
     def initialize(*args)

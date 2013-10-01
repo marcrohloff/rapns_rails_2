@@ -1,4 +1,4 @@
-require "unit_spec_helper"
+require File.expand_path("spec/unit_spec_helper")
 
 describe Rapns::DeliveryError do
   let(:error) { Rapns::DeliveryError.new(4, 12, "Missing payload") }

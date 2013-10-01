@@ -7,8 +7,8 @@ module Rapns
         attr_accessible :device_token, :failed_at, :app
       end
 
-      validates :device_token, :presence => true
-      validates :failed_at, :presence => true
+      validates_presence_of :device_token
+      validates_presence_of :failed_at
 
       validates_with Rapns::Apns::DeviceTokenFormatValidator
     end

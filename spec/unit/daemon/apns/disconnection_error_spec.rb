@@ -1,4 +1,4 @@
-require 'unit_spec_helper'
+require File.expand_path("spec/unit_spec_helper")
 
 describe Rapns::Apns::DisconnectionError do
   let(:error) { Rapns::Apns::DisconnectionError.new }

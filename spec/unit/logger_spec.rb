@@ -1,4 +1,4 @@
-require "unit_spec_helper"
+require File.expand_path("spec/unit_spec_helper")
 
 module Rails
   def self.logger
@@ -73,10 +73,11 @@ describe Rapns::Logger do
   end
 
   it 'uses ActiveSupport::Logger if BufferedLogger does not exist' do
-    stub_const('ActiveSupport::Logger', double)
-    ActiveSupport.stub(:const_defined? => false)
-    ActiveSupport::Logger.should_receive(:new).with(log, Rails.logger.level)
-    Rapns::Logger.new(:foreground => true)
+    ActiveSupport.stub_constants(:Logger => double) do
+      ActiveSupport.stub(:const_defined? => false)
+      ActiveSupport::Logger.should_receive(:new).with(log, Rails.logger.level)
+      Rapns::Logger.new(:foreground => true)
+    end
   end
 
   it "should print out the msg if running in the foreground" do

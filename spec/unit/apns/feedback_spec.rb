@@ -1,4 +1,4 @@
-require "unit_spec_helper"
+require File.expand_path("spec/unit_spec_helper")
 
 describe Rapns::Apns::Feedback do
   it "should validate the format of the device_token" do

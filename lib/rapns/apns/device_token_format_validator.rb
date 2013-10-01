@@ -4,7 +4,7 @@ module Rapns
 
       def validate(record)
         if record.device_token !~ /^[a-z0-9]{64}$/
-          record.errors[:device_token] << "is invalid"
+          record.errors.add(:device_token, "is invalid")
         end
       end
     end
