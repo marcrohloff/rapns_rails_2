@@ -72,7 +72,7 @@ describe Rapns::Daemon::Gcm::Delivery do
           { 'error' => 'InvalidDataKey' }
       ]}
       response.stub(:body => MultiJson.dump(body))
-      batch.should_receive(:mark_failed).with(notification, nil, "Failed to deliver to all recipients. Errors: NotRegistered.")
+      batch.should_receive(:mark_failed).with(notification, nil, "Failed to deliver to all recipients. Errors: InvalidDataKey.")
       perform rescue Rapns::DeliveryError
     end
 
@@ -104,7 +104,7 @@ describe Rapns::Daemon::Gcm::Delivery do
               { 'message_id' => '1:000' },
           ]}
 
-      response.stub(:body => JSON.dump(body))
+      response.stub(:body => MultiJson.dump(body))
       notification.stub(:registration_ids => ['1', '2', '3'])
       delivery.should_receive(:reflect).with(:gcm_invalid_registration_id, app, 'NotRegistered', '2')
       perform
@@ -121,7 +121,7 @@ describe Rapns::Daemon::Gcm::Delivery do
               { 'message_id' => '1:000' },
           ]}
 
-      response.stub(:body => JSON.dump(body))
+      response.stub(:body => MultiJson.dump(body))
       batch.should_not_receive(:mark_failed)
       batch.should_not_receive(:mark_retryable)
       store.should_not_receive(:create_gcm_notification)
@@ -196,7 +196,7 @@ describe Rapns::Daemon::Gcm::Delivery do
           { 'error' => 'InvalidDataKey' },
           { 'error' => 'Unavailable' }
         ]}}
-      let(:error_description) { /#{Regexp.escape("Failed to deliver to recipients 0, 1, 2. Errors: Unavailable, NotRegistered, Unavailable. 0, 2 will be retried as notification")} [\d]+\./ }
+      let(:error_description) { /#{Regexp.escape("Failed to deliver to recipients 0, 1, 2. Errors: Unavailable, InvalidDataKey, Unavailable. 0, 2 will be retried as notification")} [\d]+\./ }
       it_should_behave_like 'an notification with some delivery failures (200)'
     end
   end
