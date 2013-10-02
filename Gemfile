@@ -11,9 +11,9 @@ group :test, :development do
   gem 'rspec-rails', '1.3.4'
 end
 
-#platform :mri_19, :mri_20 do
-#  gem 'cane'
-#end
+platform :mri_19 do # , :mri_20 do
+  gem 'cane'
+end
 
 platform :ruby do
   gem 'pg'

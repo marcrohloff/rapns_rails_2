@@ -24,7 +24,7 @@ describe Rapns::Daemon::Store::ActiveRecord do
       Rapns.config.batch_size = 5000
       Rapns.config.push = false
       relation = double.as_null_object
-      relation.should_receive(:all).with(:limit => 5000)
+      relation.should_receive(:find).with(:all, :limit => 5000)
       Rapns::Notification.stub(:ready_for_delivery => relation)
       store.deliverable_notifications([app])
     end
