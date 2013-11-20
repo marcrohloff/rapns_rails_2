@@ -46,7 +46,7 @@ describe Rapns::Notifier do
     it "returns nil when wakeup is not specified" do
       Rapns.config.stub :wakeup => nil
       Rapns::Notifier.should_not_receive(:new)
-      expect(Rapns.notifier).to be_nil
+      Rapns.notifier.should be_nil
     end
   end
 end
