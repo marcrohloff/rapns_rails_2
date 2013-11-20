@@ -3,7 +3,6 @@ language: ruby
 rvm:
   - 1.9.3
   - 2.0.0
-  - ree
   - jruby-19mode
   - rbx-19mode
 gemfile:
@@ -29,12 +28,6 @@ matrix:
     - rvm: 2.0.0
       gemfile: Gemfile.rails-4.0
       env: QUALITY=true
-    - rvm: ree
-      gemfile: Gemfile.rails-4.0
-      env: QUALITY=true
-    - rvm: jruby-18mode
-      gemfile: Gemfile.rails-4.0
-      env: QUALITY=true
     - rvm: jruby-19mode
       gemfile: Gemfile.rails-4.0
       env: QUALITY=true
@@ -43,3 +36,4 @@ matrix:
       env: QUALITY=true
   allow_failures:
     - rvm: rbx-19mode
+    - rvm: jruby-19mode
