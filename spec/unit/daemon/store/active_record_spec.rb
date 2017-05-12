@@ -3,7 +3,7 @@ require 'rapns/daemon/store/active_record'
 
 describe Rapns::Daemon::Store::ActiveRecord do
   let(:app) { Rapns::Apns::App.create!(:name => 'my_app', :environment => 'development', :certificate => TEST_CERT) }
-  let(:notification) { Rapns::Apns::Notification.create!(:device_token => "a" * 64, :app => app) }
+  let(:notification) { Rapns::Apns::Notification.create!(:device_token => "a" * 256, :app => app) }
   let(:store) { Rapns::Daemon::Store::ActiveRecord.new }
   let(:now) { Time.now.utc }
 

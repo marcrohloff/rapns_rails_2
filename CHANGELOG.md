@@ -1,3 +1,6 @@
+## 3.5.1 (May 12, 2017)
+  * Increased length of device_token field for iOS
+
 ## 3.5.0 (unreleased)
   * Fix sqlite3 support (#160).
   * Drop support for Ruby 1.8.

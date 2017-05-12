@@ -7,7 +7,7 @@ describe Rapns::Daemon::Feeder do
                         :push => false,
                         :wakeup => nil) }
   let!(:app) { Rapns::Apns::App.create!(:name => 'my_app', :environment => 'development', :certificate => TEST_CERT) }
-  let(:notification) { Rapns::Apns::Notification.create!(:device_token => "a" * 64, :app => app) }
+  let(:notification) { Rapns::Apns::Notification.create!(:device_token => "a" * 256, :app => app) }
   let(:logger) { double }
   let(:interruptible_sleep) { double(:sleep => nil, :interrupt_sleep => nil) }
 

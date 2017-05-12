@@ -18,7 +18,7 @@ describe Rapns::Apns::Notification do
   end
 
   it "should validate the length of the binary conversion of the notification" do
-    notification.device_token = "a" * 64
+    notification.device_token = "a" * 256
     notification.alert = "way too long!" * 100
     notification.valid?.should be_false
     notification.errors[:base].include?("APN notification cannot be larger than 256 bytes. Try condensing your alert and device attributes.").should be_true
@@ -148,7 +148,7 @@ end
 describe Rapns::Apns::Notification, "to_binary" do
   it "should correctly convert the notification to binary" do
     notification = Rapns::Apns::Notification.new
-    notification.device_token = "a" * 64
+    notification.device_token = "a" * 256
     notification.sound = "1.aiff"
     notification.badge = 3
     notification.alert = "Don't panic Mr Mainwaring, don't panic!"
@@ -179,7 +179,7 @@ end
 describe Rapns::Apns::Notification, "bug #35" do
   it "should limit payload size to 256 bytes but not the entire packet" do
     notification = Rapns::Apns::Notification.new do |n|
-      n.device_token = "a" * 64
+      n.device_token = "a" * 256
       n.alert = "a" * 210
       n.app = Rapns::Apns::App.create!(:name => 'my_app', :environment => 'development', :certificate => TEST_CERT)
     end
