@@ -60,6 +60,8 @@ You should also implement the [apns_certificate_will_expire](https://github.com/
 
 #### GCM
 
+*Note:* This version is updated to use the legacy FCM API
+
 ```ruby
 app = Rapns::Gcm::App.new
 app.name = "android_app"
