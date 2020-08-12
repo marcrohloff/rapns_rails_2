@@ -5,7 +5,8 @@ module Rapns
       class Delivery < Rapns::Daemon::Delivery
         include Rapns::MultiJsonHelper
 
-        GCM_URI = URI.parse('https://android.googleapis.com/gcm/send')
+        # GCM_URI = URI.parse('https://android.googleapis.com/gcm/send')
+        FCM_URI = URI.parse('https://fcm.googleapis.com/fcm/send')
         UNAVAILABLE_STATES = ['Unavailable', 'InternalServerError']
         INVALID_REGISTRATION_ID_STATES = ['InvalidRegistration', 'MismatchSenderId', 'NotRegistered', 'InvalidPackageName']
 
@@ -169,10 +170,10 @@ module Rapns
         end
 
         def do_post
-          post = Net::HTTP::Post.new(GCM_URI.path, initheader = {'Content-Type'  => 'application/json',
+          post = Net::HTTP::Post.new(FCM_URI.path, initheader = {'Content-Type'  => 'application/json',
                                                                  'Authorization' => "key=#{@notification.app.auth_key}"})
           post.body = @notification.as_json.to_json
-          @http.request(GCM_URI, post)
+          @http.request(FCM_URI, post)
         end
 
         HTTP_STATUS_CODES = {
